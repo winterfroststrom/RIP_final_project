@@ -1,7 +1,8 @@
 var fs = require('fs');
 
 //var song1 = eval(fs.readFileSync("songarrayFurElise")+'');
-var song1 = eval(fs.readFileSync("songarrayRamble")+'');
+var song1 = eval(fs.readFileSync("songarrayFurElise2")+'');
+//var song1 = eval(fs.readFileSync("songarrayRamble")+'');
 
 function collide(arm1, arm2, note1, note2){
 	if(arm1 == arm2) {
