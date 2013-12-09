@@ -3,8 +3,8 @@
 var fs = require("fs");
 //var data = fs.readFileSync("jasmid/Ramblin' Wreck.midi",'binary');
 //var data = fs.readFileSync("jasmid/chno0902.mid",'binary');
-var data = fs.readFileSync("jasmid/for_elise_by_beethoven.mid", 'binary');
-//var data = fs.readFileSync("jasmid/beethoven-fur_elise.mid", 'binary');
+//var data = fs.readFileSync("jasmid/for_elise_by_beethoven.mid", 'binary');
+var data = fs.readFileSync("jasmid/beethoven-fur_elise.mid", 'binary');
 var t = data;
 var ff = [];
 var mx = t.length;
@@ -29,6 +29,8 @@ for(var i = 0; i < trackCount;i++){
 	trackIndices[i] = 0;
 	trackTimes[i] = 0;
 }
+var minNote = 48;
+var maxNote = 95;
 var time = 0;
 
 function normalizeTime(eventTime){
@@ -55,12 +57,17 @@ for(var i = 0; i < maxLength;i++){
 	if(o.type == "channel" && o.subtype == "noteOff"){
 		var deltaTime = normalizeTime(nextTime);
 		if(deltaTime == 0){
-			if(outputNotes[outputIndex].indexOf(o.noteNumber) == -1 && outputNotes[outputIndex].length < 4){
+			if(outputNotes[outputIndex].indexOf(o.noteNumber) == -1 && 
+					outputNotes[outputIndex].length < 4 && o.noteNumber <= maxNote && o.noteNumber >= minNote){
 				outputNotes[outputIndex].push(o.noteNumber);
 			}
 		} else {
 			outputIndex++;
-			outputNotes[outputIndex] = [o.noteNumber];
+			if(o.noteNumer <= maxNote && o.noteNumer >= minNote){
+				outputNotes[outputIndex] = [o.noteNumber];
+			} else {
+				outputNotes[outputIndex] = [0];
+			}
 			outputTime[outputIndex] = deltaTime;
 		}
 	}

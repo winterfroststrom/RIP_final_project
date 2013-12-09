@@ -2,8 +2,15 @@ var fs = require('fs');
 
 //var song1 = eval(fs.readFileSync("songarrayFurElise")+'');
 var song1 = eval(fs.readFileSync("songarrayFurElise2")+'');
+//var song1 = eval(fs.readFileSync("songarray2FurElise2")+'');
 //var song1 = eval(fs.readFileSync("songarrayRamble")+'');
+//var song1 = eval(fs.readFileSync("tt")+'');
 
+
+var minNote = 48;
+var maxNote = 95;
+var searchDepth = 3;
+var branching = 5;
 
 function collide(arm1, arm2, note1, note2){
 	if(arm1 == arm2) {
@@ -11,7 +18,7 @@ function collide(arm1, arm2, note1, note2){
 	} else if(arm1 == 1 && arm2 == 2 || arm1 == 2 && arm2 == 1 || arm1 == 3 && arm2 == 4 || arm1 == 4 && arm2 == 3) {
 		return Math.abs(note1 - note2) <= 2
 	} else if(arm1 == 2 && arm2 == 3 || arm1 == 3 && arm2 == 2){
-		return Math.abs(note1 - note2) <= 4;
+		return Math.abs(note1 - note2) <= 6;
 	} else {
 		return false;
 	}
@@ -163,8 +170,6 @@ function velocities(positions, notes){
 }
 
 function minCostNextState(oldPositions, songData, songIndex){
-	var minNote = 36;
-	var maxNote = 83;
 	var notes = playingNotes(songData.slice(0, 4));
 	var minDistance = Math.pow(maxNote - minNote, 4);
 	var minPositions = [-1, -1, -1, -1];
@@ -198,15 +203,13 @@ function greedyPlanner(song, arm_positions){
 		if(next[0] != -1){
 			plan.push(next.slice(0, 9));
 		} else {
-//			console.log("Unplayable note " + song[i][4]+ " at index " + i + "!");
+//			console.log("Unplayable note " + song[i]+ " at index " + i + "!");
 		}
 	}
 	return plan;
 }
 
 function multiMinCostNextState(oldPositions, songData, songIndex, limit){
-	var minNote = 36;
-	var maxNote = 83;
 	var notes = playingNotes(songData.slice(0, 4));
 	var buffer = new SortedBuffer(limit);
 	var commonData = [songData[4], songIndex];
@@ -230,7 +233,6 @@ function multiMinCostNextState(oldPositions, songData, songIndex, limit){
 function limitedSearch(song, arm_positions, startIndex, limit, branching){
 	var ds = [];
 	ds.push([[arm_positions[0], arm_positions[1], arm_positions[2], arm_positions[3], 0, 0, 0, 0, 0, startIndex, 0]]);
-	var progress = 0;
 	while(ds.length > 0){
 		var currentCost = 999999999999;
 		var currentIndex = -1;
@@ -246,8 +248,7 @@ function limitedSearch(song, arm_positions, startIndex, limit, branching){
 		}
 		var current = ds.splice(currentIndex, 1)[0];
 		var songIndex = current[current.length - 1][9];
-		progress = Math.max(progress, songIndex - startIndex);
-		if(progress >= limit){
+		if(songIndex - startIndex >= limit){
 			return current;
 		}
 		var nexts = multiMinCostNextState(current[current.length - 1].slice(0, 4), song[songIndex], songIndex + 1, branching);
@@ -261,9 +262,7 @@ function limitedSearch(song, arm_positions, startIndex, limit, branching){
 }
 
 function limitedSearchPlanner(song, arm_positions){
-	var plan = [[arm_positions[0], arm_positions[1], arm_positions[2], arm_positions[3], 0, 0, 0, 0, 0, 0]];
-	var searchDepth = 2;
-	var branching = 5;
+	var plan = [[arm_positions[0], arm_positions[1], arm_positions[2], arm_positions[3], 0, 0, 0, 0, 0]];
 	for(var i = 0; i < song.length; i++){
 		var next = limitedSearch(song, plan[plan.length - 1].slice(0, 4), i, Math.min(searchDepth, song.length - i), branching);
 		if(next != null){
@@ -279,13 +278,12 @@ function onlineGreedyPlanner(songData, arm_positions){
 }
 
 function onlineLimitedSearchPlanner(songData, arm_positions){
-	var searchDepth = 2;
-	var branching = 5;
 	return limitedSearch(song, arm_positions.slice(0, 4), songData, Math.min(searchDepth, song.length - i), branching);
 }
 
-//console.log(greedyPlanner(song1, [68, 70, 74, 76]));
-console.log(limitedSearchPlanner(song1, [68, 70, 74, 76]));
+var start = [52, 64, 77, 89];
+//console.log(greedyPlanner(song1, start));
+console.log(limitedSearchPlanner(song1, start));
 
 
 
