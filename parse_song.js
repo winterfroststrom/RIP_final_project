@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 var fs = require("fs");
-//var data = fs.readFileSync("jasmid/Ramblin' Wreck.midi",'binary');
+var data = fs.readFileSync("jasmid/Ramblin' Wreck.midi",'binary');
 //var data = fs.readFileSync("jasmid/chno0902.mid",'binary');
 //var data = fs.readFileSync("jasmid/for_elise_by_beethoven.mid", 'binary');
-var data = fs.readFileSync("jasmid/beethoven-fur_elise.mid", 'binary');
+//var data = fs.readFileSync("jasmid/beethoven-fur_elise.mid", 'binary');
 var t = data;
 var ff = [];
 var mx = t.length;
@@ -63,7 +63,7 @@ for(var i = 0; i < maxLength;i++){
 			}
 		} else {
 			outputIndex++;
-			if(o.noteNumer <= maxNote && o.noteNumer >= minNote){
+			if(o.noteNumber <= maxNote && o.noteNumber >= minNote){
 				outputNotes[outputIndex] = [o.noteNumber];
 			} else {
 				outputNotes[outputIndex] = [0];

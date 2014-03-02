@@ -5,14 +5,15 @@ function loadSong(file){
 }
 
 //var song1 = eval(fs.readFileSync("songarrayFurElise")+'');
-//var song1 = eval(fs.readFileSync("songarrayFurElise2")+'');
+var song1 = eval(fs.readFileSync("songarrayFurElise2")+'');
 //var song1 = eval(fs.readFileSync("songarray_elise", 'utf8'));
 //var song1 = loadSong("elise_first.txt");
 //var song1 = loadSong("ramblinArray.txt");
 //var song1 = eval(fs.readFileSync("songarray2FurElise2")+'');
 //var song1 = eval(fs.readFileSync("songarrayRamble")+'');
 //var song1 = eval(fs.readFileSync("tt")+'');
-var song1 = loadSong("first.txt");
+//var song1 = loadSong("first.txt");
+//var song1 = loadSong("songarrayRamble2");
 
 var minNote = 48;
 var maxNote = 95;
@@ -215,14 +216,15 @@ function greedyPlanner(song, arm_positions){
 	var t = new Date();
 	for(var i = 0; i < song.length; i++){
 		var current = plan[plan.length - 1];
-		var next = minCostNextState(current.slice(0, 4), song[i], i + 1);
+//		var next = betterMultiMinCostNextState(current.slice(0, 4), song[i], i + 1)[0];
+		var next = minCostNextState(current.slice(0, 4), song[i], i, i + 1);
 		if(next[0] != -1){
 			plan.push(next.slice(0, 9));
 		} else {
 //			console.log("Unplayable note " + song[i]+ " at index " + i + "!");
 		}
 	}
-//	console.log((new Date()) - t);
+	console.log((new Date()) - t);
 	return plan;
 }
 
@@ -347,7 +349,7 @@ function limitedSearch(song, arm_positions, startIndex, limit, branching){
 		for(var i = 0; i < ds.length;i++){
 			var possibleCost = 0;
 			for(var j = 0; j < ds[i].length;j++){
-				possibleCost += ds[i][j][10];
+				possibleCost += Math.sqrt(ds[i][j][10]);
 			}
 			if(possibleCost < currentCost){
 				currentIndex = i;
@@ -392,8 +394,10 @@ function onlineLimitedSearchPlanner(songData, arm_positions){
 }
 
 var start = [52, 64, 77, 89];
+var plan = greedyPlanner(song1, start);
+//var plan = limitedSearchPlanner(song1, start);
 //console.log(greedyPlanner(song1, start));
-console.log(limitedSearchPlanner(song1, start));
+//console.log(limitedSearchPlanner(song1, start));
 
 
 
